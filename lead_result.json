@@ -1,0 +1,290 @@
+[
+ {
+  "sector": "元件",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "东山精密",
+  "code": "002384",
+  "chg": "-10.00"
+ },
+ {
+  "sector": "通信设备",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "蘅东光",
+  "code": "920045",
+  "chg": "-10.38"
+ },
+ {
+  "sector": "玻璃玻纤",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "山东玻纤",
+  "code": "605006",
+  "chg": "-8.57"
+ },
+ {
+  "sector": "医疗服务",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "成都先导",
+  "code": "688222",
+  "chg": "-8.22"
+ },
+ {
+  "sector": "电子化学品",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "鸿富诚",
+  "code": "301716",
+  "chg": "-13.66"
+ },
+ {
+  "sector": "自动化设备",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "博杰股份",
+  "code": "002975",
+  "chg": "-8.29"
+ },
+ {
+  "sector": "消费电子",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "C皇冠",
+  "code": "001381",
+  "chg": "-17.11"
+ },
+ {
+  "sector": "工业金属",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "金诚信",
+  "code": "603979",
+  "chg": "-7.52"
+ },
+ {
+  "sector": "通用设备",
+  "period": "",
+  "dir": "down",
+  "ok": true,
+  "name": "大业股份",
+  "code": "603278",
+  "chg": "-10.01"
+ },
+ {
+  "sector": "影视院线",
+  "period": "近1周",
+  "dir": "up",
+  "ok": true,
+  "name": "华智数媒",
+  "code": "300426",
+  "chg": "51.32"
+ },
+ {
+  "sector": "光伏设备",
+  "period": "近1周",
+  "dir": "up",
+  "ok": true,
+  "name": "贝特利",
+  "code": "301697",
+  "chg": "80.30"
+ },
+ {
+  "sector": "游戏",
+  "period": "近1周",
+  "dir": "up",
+  "ok": true,
+  "name": "掌趣科技",
+  "code": "300315",
+  "chg": "21.70"
+ },
+ {
+  "sector": "广告营销",
+  "period": "近1周",
+  "dir": "up",
+  "ok": true,
+  "name": "引力传媒",
+  "code": "603598",
+  "chg": "37.15"
+ },
+ {
+  "sector": "小家电",
+  "period": "近1周",
+  "dir": "up",
+  "ok": true,
+  "name": "石头科技",
+  "code": "688169",
+  "chg": "24.63"
+ },
+ {
+  "sector": "数字媒体",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "凡拓数创",
+  "code": "301313",
+  "chg": "141.31"
+ },
+ {
+  "sector": "白酒",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "皇台酒业",
+  "code": "000995",
+  "chg": "42.37"
+ },
+ {
+  "sector": "小家电",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "九阳股份",
+  "code": "002242",
+  "chg": "82.55"
+ },
+ {
+  "sector": "影视院线",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "上海电影",
+  "code": "601595",
+  "chg": "59.00"
+ },
+ {
+  "sector": "酒店餐饮",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "首旅酒店",
+  "code": "600258",
+  "chg": "25.88"
+ },
+ {
+  "sector": "养殖业",
+  "period": "近1个月",
+  "dir": "up",
+  "ok": true,
+  "name": "立华股份",
+  "code": "300761",
+  "chg": "15.87"
+ },
+ {
+  "sector": "数字媒体",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "芒果超媒",
+  "code": "300413",
+  "chg": "117.69"
+ },
+ {
+  "sector": "影视院线",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "上海电影",
+  "code": "601595",
+  "chg": "101.96"
+ },
+ {
+  "sector": "国有大型银行",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "交通银行",
+  "code": "601328",
+  "chg": "20.12"
+ },
+ {
+  "sector": "出版",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "新华传媒",
+  "code": "600825",
+  "chg": "157.77"
+ },
+ {
+  "sector": "养殖业",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "东瑞股份",
+  "code": "001201",
+  "chg": "41.88"
+ },
+ {
+  "sector": "小家电",
+  "period": "近3个月",
+  "dir": "up",
+  "ok": true,
+  "name": "九阳股份",
+  "code": "002242",
+  "chg": "186.20"
+ },
+ {
+  "sector": "医疗服务",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "万邦医药",
+  "code": "301520",
+  "chg": "91.53"
+ },
+ {
+  "sector": "国有大型银行",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "交通银行",
+  "code": "601328",
+  "chg": "27.11"
+ },
+ {
+  "sector": "股份制银行",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "招商银行",
+  "code": "600036",
+  "chg": "16.11"
+ },
+ {
+  "sector": "数字媒体",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "凡拓数创",
+  "code": "301313",
+  "chg": "87.31"
+ },
+ {
+  "sector": "城商行",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "北京银行",
+  "code": "601169",
+  "chg": "17.64"
+ },
+ {
+  "sector": "白色家电",
+  "period": "近6个月",
+  "dir": "up",
+  "ok": true,
+  "name": "美的集团",
+  "code": "000333",
+  "chg": "16.99"
+ }
+]

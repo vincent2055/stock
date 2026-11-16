@@ -1,0 +1,14 @@
+# WorkBuddy 本地项目数据（工作日志、自动化记忆等，不应公开）
+.workbuddy/
+
+# WorkBuddy 应用发布标记文件
+.wbapp_*.genie
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 系统文件
+.DS_Store
+Thumbs.db

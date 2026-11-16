@@ -1,0 +1,350 @@
+{
+ "today_top": [
+  {
+   "code": "801766",
+   "name": "影视院线",
+   "today": 3.5,
+   "period": null
+  },
+  {
+   "code": "801111",
+   "name": "白色家电",
+   "today": 2.68,
+   "period": null
+  },
+  {
+   "code": "801017",
+   "name": "养殖业",
+   "today": 2.35,
+   "period": null
+  },
+  {
+   "code": "801125",
+   "name": "白酒",
+   "today": 1.81,
+   "period": null
+  },
+  {
+   "code": "801784",
+   "name": "城商行",
+   "today": 1.76,
+   "period": null
+  },
+  {
+   "code": "801014",
+   "name": "饲料",
+   "today": 1.7,
+   "period": null
+  },
+  {
+   "code": "801782",
+   "name": "国有大型银行",
+   "today": 1.56,
+   "period": null
+  },
+  {
+   "code": "801785",
+   "name": "农商行",
+   "today": 1.3,
+   "period": null
+  },
+  {
+   "code": "801951",
+   "name": "煤炭开采",
+   "today": 1.24,
+   "period": null
+  },
+  {
+   "code": "801995",
+   "name": "电视广播",
+   "today": 1.22,
+   "period": null
+  },
+  {
+   "code": "801783",
+   "name": "股份制银行",
+   "today": 1.21,
+   "period": null
+  },
+  {
+   "code": "801194",
+   "name": "保险",
+   "today": 1.06,
+   "period": null
+  }
+ ],
+ "today_bottom": [
+  {
+   "code": "801083",
+   "name": "元件",
+   "today": -8.55,
+   "period": null
+  },
+  {
+   "code": "801102",
+   "name": "通信设备",
+   "today": -6.29,
+   "period": null
+  },
+  {
+   "code": "801712",
+   "name": "玻璃玻纤",
+   "today": -6.07,
+   "period": null
+  },
+  {
+   "code": "801039",
+   "name": "非金属材料",
+   "today": -5.48,
+   "period": null
+  },
+  {
+   "code": "801743",
+   "name": "地面兵装",
+   "today": -4.46,
+   "period": null
+  },
+  {
+   "code": "801082",
+   "name": "其他电子",
+   "today": -4.02,
+   "period": null
+  },
+  {
+   "code": "801036",
+   "name": "塑料",
+   "today": -4.01,
+   "period": null
+  },
+  {
+   "code": "801086",
+   "name": "电子化学品",
+   "today": -3.92,
+   "period": null
+  },
+  {
+   "code": "801072",
+   "name": "通用设备",
+   "today": -3.87,
+   "period": null
+  },
+  {
+   "code": "801183",
+   "name": "房地产服务",
+   "today": -3.78,
+   "period": null
+  },
+  {
+   "code": "801051",
+   "name": "金属新材料",
+   "today": -3.57,
+   "period": null
+  },
+  {
+   "code": "801733",
+   "name": "其他电源设备",
+   "today": -3.44,
+   "period": null
+  }
+ ],
+ "w1": [
+  {
+   "code": "801114",
+   "name": "厨卫电器",
+   "today": -0.24,
+   "period": 6.08
+  },
+  {
+   "code": "801766",
+   "name": "影视院线",
+   "today": 3.5,
+   "period": 5.72
+  },
+  {
+   "code": "801015",
+   "name": "渔业",
+   "today": 0.58,
+   "period": 5.32
+  },
+  {
+   "code": "801092",
+   "name": "汽车服务",
+   "today": -1.83,
+   "period": 4.43
+  },
+  {
+   "code": "801102",
+   "name": "通信设备",
+   "today": -6.29,
+   "period": 4.36
+  },
+  {
+   "code": "801782",
+   "name": "国有大型银行",
+   "today": 1.56,
+   "period": 3.18
+  },
+  {
+   "code": "801081",
+   "name": "半导体",
+   "today": -2.92,
+   "period": 2.91
+  },
+  {
+   "code": "801017",
+   "name": "养殖业",
+   "today": 2.35,
+   "period": 2.6
+  }
+ ],
+ "m1": [
+  {
+   "code": "801017",
+   "name": "养殖业",
+   "today": 2.35,
+   "period": 12.99
+  },
+  {
+   "code": "801113",
+   "name": "小家电",
+   "today": -0.62,
+   "period": 11.92
+  },
+  {
+   "code": "801766",
+   "name": "影视院线",
+   "today": 3.5,
+   "period": 11.39
+  },
+  {
+   "code": "801767",
+   "name": "数字媒体",
+   "today": -1.46,
+   "period": 10.57
+  },
+  {
+   "code": "801125",
+   "name": "白酒",
+   "today": 1.81,
+   "period": 8.54
+  },
+  {
+   "code": "801741",
+   "name": "航天装备",
+   "today": -2.25,
+   "period": 8.3
+  },
+  {
+   "code": "801219",
+   "name": "酒店餐饮",
+   "today": 0.61,
+   "period": 7.63
+  },
+  {
+   "code": "801731",
+   "name": "电机",
+   "today": -2.69,
+   "period": 6.98
+  }
+ ],
+ "m3": [
+  {
+   "code": "801767",
+   "name": "数字媒体",
+   "today": -1.46,
+   "period": 23.95
+  },
+  {
+   "code": "801766",
+   "name": "影视院线",
+   "today": 3.5,
+   "period": 22.44
+  },
+  {
+   "code": "801782",
+   "name": "国有大型银行",
+   "today": 1.56,
+   "period": 18.63
+  },
+  {
+   "code": "801769",
+   "name": "出版",
+   "today": -0.52,
+   "period": 16.0
+  },
+  {
+   "code": "801017",
+   "name": "养殖业",
+   "today": 2.35,
+   "period": 14.09
+  },
+  {
+   "code": "801113",
+   "name": "小家电",
+   "today": -0.62,
+   "period": 9.93
+  },
+  {
+   "code": "801783",
+   "name": "股份制银行",
+   "today": 1.21,
+   "period": 9.78
+  },
+  {
+   "code": "801784",
+   "name": "城商行",
+   "today": 1.76,
+   "period": 9.42
+  }
+ ],
+ "m6": [
+  {
+   "code": "801782",
+   "name": "国有大型银行",
+   "today": 1.56,
+   "period": 20.31
+  },
+  {
+   "code": "801156",
+   "name": "医疗服务",
+   "today": -3.01,
+   "period": 17.77
+  },
+  {
+   "code": "801783",
+   "name": "股份制银行",
+   "today": 1.21,
+   "period": 10.4
+  },
+  {
+   "code": "801767",
+   "name": "数字媒体",
+   "today": -1.46,
+   "period": 9.82
+  },
+  {
+   "code": "801784",
+   "name": "城商行",
+   "today": 1.76,
+   "period": 9.14
+  },
+  {
+   "code": "801785",
+   "name": "农商行",
+   "today": 1.3,
+   "period": 5.23
+  },
+  {
+   "code": "801766",
+   "name": "影视院线",
+   "today": 3.5,
+   "period": 4.71
+  },
+  {
+   "code": "801111",
+   "name": "白色家电",
+   "today": 2.68,
+   "period": 4.65
+  }
+ ]
+}

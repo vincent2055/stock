@@ -1,0 +1,62 @@
+{
+ "t8": {
+  "board": "煤炭开采",
+  "dir": "today_up",
+  "ok": false
+ },
+ "t9": {
+  "board": "电视广播",
+  "dir": "today_up",
+  "ok": false
+ },
+ "d0": {
+  "board": "元件",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d1": {
+  "board": "通信设备",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d2": {
+  "board": "玻璃玻纤",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d3": {
+  "board": "非金属材料",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d4": {
+  "board": "地面兵装",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d5": {
+  "board": "其他电子",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d6": {
+  "board": "塑料",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d7": {
+  "board": "电子化学品",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d8": {
+  "board": "通用设备",
+  "dir": "today_down",
+  "ok": false
+ },
+ "d9": {
+  "board": "房地产服务",
+  "dir": "today_down",
+  "ok": false
+ }
+}
