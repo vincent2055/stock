@@ -2,7 +2,7 @@
 """妙想选股器：板块排名采集（降级方案，绕过被反爬的东财 clist）"""
 import subprocess, csv, os, json, sys, glob, time
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 OUT = os.path.join(SKILL_DIR, "miaoxiang", "mx_stocks_screener")
 
 def run_query(query, select_type="板块"):

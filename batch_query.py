@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import subprocess, csv, os, json, sys
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 OUT = os.path.join(SKILL_DIR, "miaoxiang", "mx_stocks_screener")
 
 # 查询列表：(板块名, 方向, 周期)

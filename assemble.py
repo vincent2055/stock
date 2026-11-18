@@ -2,7 +2,7 @@
 """生成 trade-review.html：汇总所有数据源，输出自包含单文件 HTML。"""
 import json, os, re
 
-BASE = r"D:\workbuddy"
+BASE = os.path.dirname(os.path.abspath(__file__))
 
 def load(name, default):
     p = os.path.join(BASE, name)

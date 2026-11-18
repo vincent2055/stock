@@ -2,7 +2,7 @@
 """妙想选股器：涨跌家数 + 涨跌分布 采集（返回行数即计数）"""
 import subprocess, os, sys, json
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 
 def run_count(query):
     r = subprocess.run([sys.executable, "scripts/get_data.py", "--query", query, "--select-type", "A股"],

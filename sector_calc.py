@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-import json
+# 用法: python sector_calc.py <今日data_quote结果文件> <半年前data_quote结果文件>
+import json, sys
 
-BASE = r"C:\Users\15899\.workbuddy\projects\d-workbuddy\96872b34-9ade-4684-b467-07eaf70c38e0\tool-results"
-TODAY = BASE + r"\mcp-westock-mcp-data_quote-1794109241161-00376f.txt"
-HALFYEAR = BASE + r"\mcp-westock-mcp-data_quote-1794109241469-ad61bb.txt"
+if len(sys.argv) >= 3:
+    TODAY, HALFYEAR = sys.argv[1], sys.argv[2]
+else:
+    print("用法: python sector_calc.py <今日data_quote结果文件> <半年前data_quote结果文件>")
+    sys.exit(1)
 
 today = json.load(open(TODAY, encoding="utf-8"))["data"]
 half = json.load(open(HALFYEAR, encoding="utf-8"))["data"]

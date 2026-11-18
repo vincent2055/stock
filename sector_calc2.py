@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
-"""处理板块周期数据：从两个 data_quote 结果文件提取 124 板块 today/w1/m1/m3/m6"""
-import json
+"""处理板块周期数据：从两个 data_quote 结果文件提取 124 板块 today/w1/m1/m3/m6
+用法: python sector_calc2.py <今日data_quote结果文件> <半年前data_quote结果文件>
+"""
+import json, sys
 
-TODAY_FILE = r"C:\Users\15899\.workbuddy\projects\d-workbuddy\e031bab6-89cb-45ab-81e1-97e59dec669b\tool-results\mcp-westock-mcp-data_quote-1794814589852-986bfa.txt"
-HALF_FILE  = r"C:\Users\15899\.workbuddy\projects\d-workbuddy\e031bab6-89cb-45ab-81e1-97e59dec669b\tool-results\mcp-westock-mcp-data_quote-1794814591205-81ba94.txt"
+if len(sys.argv) >= 3:
+    TODAY_FILE, HALF_FILE = sys.argv[1], sys.argv[2]
+else:
+    print("用法: python sector_calc2.py <今日data_quote结果文件> <半年前data_quote结果文件>")
+    sys.exit(1)
 
 today = json.load(open(TODAY_FILE, encoding='utf-8'))['data']
 half = json.load(open(HALF_FILE, encoding='utf-8'))['data']

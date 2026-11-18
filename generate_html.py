@@ -2,7 +2,7 @@
 """读取 final_data.json，生成自包含 trade-review.html"""
 import json, os
 
-BASE = r"D:\workbuddy"
+BASE = os.path.dirname(os.path.abspath(__file__))
 data = json.load(open(os.path.join(BASE, "final_data.json"), encoding='utf-8'))
 
 LEADERS = data['leaders']; TODAY = data['today_sectors']; DOWN = data['sector_down']

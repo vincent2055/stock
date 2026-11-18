@@ -2,7 +2,7 @@
 """汇总 2026-11-16 收盘数据，生成 final_data.json（供 generate_html.py 使用）"""
 import json, os
 
-BASE = r"D:\workbuddy"
+BASE = os.path.dirname(os.path.abspath(__file__))
 
 def load(name, default):
     p = os.path.join(BASE, name)

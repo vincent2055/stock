@@ -2,7 +2,7 @@
 """妙想选股器：龙头股/领跌股 采集"""
 import subprocess, csv, os, json, sys
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 
 def run_query(query, select_type="A股"):
     r = subprocess.run([sys.executable, "scripts/get_data.py", "--query", query, "--select-type", select_type],

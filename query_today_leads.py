@@ -2,7 +2,7 @@
 """查询当天热点板块的领涨股（当天涨幅最大个股），东方财富妙想选股器"""
 import subprocess, csv, os, json, sys
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 
 # 当天热点板块 TOP10（today 涨幅榜，去 Ⅱ 后缀）
 QUERIES = [

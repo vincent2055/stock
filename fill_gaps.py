@@ -2,7 +2,7 @@
 """缺口补齐：多周期板块、龙头/领跌股、涨跌分布、个股板块涨幅。含重试与延迟。"""
 import subprocess, csv, os, json, sys, time
 
-SKILL_DIR = r"C:\Users\15899\.workbuddy\skills\mx-stocks-screener"
+SKILL_DIR = os.path.join(os.path.expanduser("~"), ".workbuddy", "skills", "mx-stocks-screener")
 
 def run_query(query, select_type, retries=2):
     for attempt in range(retries + 1):
