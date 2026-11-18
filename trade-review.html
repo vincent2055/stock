@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>复盘看盘工作台</title>
+<script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js"></script>
 <style>
 :root{
   --bg:#f2f4f7; --card:#ffffff; --text:#1a2233; --muted:#6b7280; --border:#e6e8ee;
@@ -15,15 +16,21 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding-bottom:80px}
-header.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding-bottom:90px}
+header.topbar{position:sticky;top:0;z-index:50;background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px}
 .brand{display:flex;flex-direction:column;min-width:0}
 .brand h1{font-size:16px;font-weight:600;white-space:nowrap}
 .brand .sub{font-size:12px;color:var(--muted);white-space:nowrap}
 .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:500}
 .badge.real{background:var(--accent-bg);color:var(--accent)}
 .badge.snapshot{background:var(--warn-bg);color:var(--warn)}
-nav.tabs{position:sticky;top:58px;z-index:49;background:var(--bg);display:flex;gap:6px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
+.datebar{display:flex;align-items:center;gap:8px;margin-top:10px}
+.datebar .dlabel{font-size:12px;color:var(--muted);flex-shrink:0}
+.datebar select{flex:1;min-width:0;height:40px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:14px;font-weight:600;padding:0 10px}
+.datebar .navbtn{flex-shrink:0;width:40px;height:40px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.datebar .navbtn:active{background:var(--bg)}
+#loadHint{font-size:12px;color:var(--muted);text-align:center;padding:40px 16px}
+nav.tabs{position:sticky;top:106px;z-index:49;background:var(--bg);display:flex;gap:6px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{flex:0 0 auto;height:40px;padding:0 16px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
 nav.tabs button.active{background:var(--text);color:#fff;border-color:var(--text)}
@@ -50,7 +57,7 @@ main{max-width:1080px;margin:0 auto;padding:12px 16px}
 .up{color:var(--up)} .down{color:var(--down)}
 .up-bg{background:var(--up-bg)} .down-bg{background:var(--down-bg)}
 .breadth-box{display:flex;align-items:center;gap:16px}
-.pie{position:relative;width:96px;height:96px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--down) 0 85.3%, var(--muted) 85.3% 86.2%, var(--up) 86.2% 100%)}
+.pie{position:relative;width:96px;height:96px;border-radius:50%;flex-shrink:0}
 .pie::after{content:'';position:absolute;inset:24%;background:var(--card);border-radius:50%}
 .pie .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1}
 .pie .center b{font-size:16px;font-weight:700}
@@ -126,6 +133,12 @@ td .code{font-size:11px;color:var(--muted)}
 .lc-name{font-weight:500}
 .lc-ld{font-size:11px;color:var(--muted);margin-top:2px}
 .lc-ld b{font-weight:500}
+.trend-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.trend-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px}
+.trend-card h3{font-size:13px;font-weight:600;margin-bottom:6px}
+.trend-card svg{display:block;width:100%;height:auto}
+.trend-legend{display:flex;gap:12px;font-size:11px;color:var(--muted);margin-top:4px;flex-wrap:wrap}
+.trend-legend .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle}
 footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:11px;color:var(--muted);text-align:center;line-height:1.7}
 @media (max-width:760px){
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
@@ -134,6 +147,7 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
   .intl-grid{grid-template-columns:repeat(2,1fr)}
   .leader-grid{grid-template-columns:repeat(2,1fr)}
   .zb-stats{grid-template-columns:repeat(2,1fr)}
+  .trend-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -141,15 +155,21 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
 <header class="topbar">
   <div class="brand">
     <h1>复盘看盘工作台</h1>
-    <div class="sub"><span class="badge real">东财/新浪 · 真实数据</span> 2026-11-13 周五 收盘快照</div>
+    <div class="sub"><span class="badge real">云数据库 · 历史可回溯</span> <span class="badge snapshot" id="snapshotBadge">复盘专用 · 一次快照</span></div>
   </div>
-  <div class="top-actions">
-    <span class="badge snapshot">复盘专用 · 一次快照 · 不实时刷新</span>
+  <div class="datebar">
+    <span class="dlabel">历史日期</span>
+    <button class="navbtn" id="btnPrev" onclick="stepDate(-1)" title="前一天">‹</button>
+    <select id="dateSelect" onchange="selectDate(this.value)"></select>
+    <button class="navbtn" id="btnNext" onclick="stepDate(1)" title="后一天">›</button>
   </div>
 </header>
 
-<nav class="tabs" id="tabs">
+<div id="loadHint">正在从云数据库加载历史数据…</div>
+
+<nav class="tabs" id="tabs" style="display:none">
   <button class="active" data-tab="overview" onclick="switchTab('overview')">总览</button>
+  <button data-tab="trend" onclick="switchTab('trend')">趋势</button>
   <button data-tab="emotion" onclick="switchTab('emotion')">情绪</button>
   <button data-tab="sector" onclick="switchTab('sector')">板块</button>
   <button data-tab="stock" onclick="switchTab('stock')">个股</button>
@@ -157,95 +177,72 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
   <button data-tab="review" onclick="switchTab('review')">复盘</button>
 </nav>
 
-<main>
+<main id="main" style="display:none">
   <section class="panel active" id="panel-overview">
-    <div class="kpi-grid">
-      <div class="kpi"><div class="label">市场环境评分</div><div class="val">20<small> /100</small></div><div class="desc down">弱势 · 普跌防御</div></div>
-      <div class="kpi"><div class="label">情绪周期</div><div class="val" style="font-size:20px">退潮</div><div class="desc">普跌 · 防御切换</div></div>
-      <div class="kpi"><div class="label">涨停 / 跌停</div><div class="val"><span class="up">37</span><span style="color:var(--muted)"> / </span><span class="down">33</span></div><div class="desc">炸板 21 · 封板率 63.8%</div></div>
-      <div class="kpi"><div class="label">两市成交</div><div class="val">1.66<small> 万亿</small></div><div class="desc down">量能低位</div></div>
-    </div>
-
+    <div class="kpi-grid" id="kpiGrid"></div>
     <div class="grid2">
       <div class="card">
-        <h2>指数概览 <span class="hint">2026-11-13 收盘</span></h2>
-        <div class="idx-row"><div class="nm">上证指数<small>000001</small></div><div><div class="pr">3634.35</div><div class="chg down">-0.59%</div></div></div><div class="idx-row"><div class="nm">深证成指<small>399001</small></div><div><div class="pr">10968.79</div><div class="chg down">-2.05%</div></div></div><div class="idx-row"><div class="nm">创业板指<small>399006</small></div><div><div class="pr">2426.08</div><div class="chg down">-3.32%</div></div></div><div class="idx-row"><div class="nm">科创50<small>000688</small></div><div><div class="pr">1279.66</div><div class="chg down">-2.3%</div></div></div><div class="idx-row"><div class="nm">北证50<small>899050</small></div><div><div class="pr">910.51</div><div class="chg up">+0.27%</div></div></div>
+        <h2>指数概览 <span class="hint" id="idxHint"></span></h2>
+        <div id="idxList"></div>
       </div>
       <div class="card">
-        <h2>涨跌家数 <span class="hint">全市场 5564 家</span></h2>
+        <h2>涨跌家数 <span class="hint" id="breadthHint"></span></h2>
         <div class="breadth-box">
-          <div class="pie"><div class="center"><b>85.3%</b><span>下跌占比</span></div></div>
-          <div class="breadth-nums">
-            <div class="bn-row"><span class="bn-dot" style="background:var(--up)"></span>上涨<b class="up">765</b></div>
-            <div class="bn-row"><span class="bn-dot" style="background:var(--muted)"></span>平盘<b>51</b></div>
-            <div class="bn-row"><span class="bn-dot" style="background:var(--down)"></span>下跌<b class="down">4748</b></div>
-          </div>
+          <div class="pie" id="pieChart"><div class="center"><b id="piePct"></b><span>下跌占比</span></div></div>
+          <div class="breadth-nums" id="breadthNums"></div>
         </div>
-        <div class="plan-box" style="margin-top:10px;margin-bottom:0">
-          上涨占比仅 <b>13.7%</b>，赚钱效应弱。资金从元件、通信、半导体等成长方向撤离，涌入银行、白酒、家电、养殖等防御方向，属典型普跌防御日。
-        </div>
+        <div class="plan-box" style="margin-top:10px;margin-bottom:0" id="breadthNote"></div>
       </div>
     </div>
     <div class="card">
-      <h2>国际指数 <span class="hint">美股 / 港股 / 日股 / 韩股 · 2026-11-13</span></h2>
+      <h2>国际指数 <span class="hint" id="intlHint"></span></h2>
       <div class="intl-grid" id="intlGrid"></div>
-      <div class="intl-note">
-        全球风险偏好信号：恒生科技 <b class="down">-3.02%</b>、港股领跌，纳指 <b class="down">-0.91%</b>，日经 <span class="up">+0.53%</span> 逆势。外盘整体偏弱，对 A 股风险偏好形成压制。
-      </div>
+      <div class="intl-note" id="intlNote"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-trend">
+    <div class="card">
+      <h2>多日趋势对比 <span class="hint">市场评分 / 涨跌家数 / 涨停跌停 / 成交额</span></h2>
+      <div class="trend-grid" id="trendGrid"></div>
     </div>
   </section>
 
   <section class="panel" id="panel-emotion">
     <div class="card">
-      <h2>市场环境评分 <span class="hint">满分 100 · 分析判断</span></h2>
+      <h2>市场环境评分 <span class="hint">满分 100</span></h2>
       <div style="display:flex;gap:16px;align-items:center;margin-bottom:12px">
         <div class="ring" style="width:88px;height:88px">
-          <svg width="88" height="88"><circle cx="44" cy="44" r="38" stroke="var(--bg)" stroke-width="10" fill="none"/><circle cx="44" cy="44" r="38" stroke="var(--down)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="191.2"/></svg>
-          <div class="num" style="font-size:22px">20</div>
+          <svg width="88" height="88"><circle cx="44" cy="44" r="38" stroke="var(--bg)" stroke-width="10" fill="none"/><circle id="scoreRing" cx="44" cy="44" r="38" stroke="var(--down)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/></svg>
+          <div class="num" style="font-size:22px" id="scoreNum"></div>
         </div>
-        <div style="font-size:13px;color:var(--muted)">弱势市：情绪退潮、封板率偏低、跌停家数偏多，宜<b>轻仓防守</b>，规避破位成长股，等待企稳信号。</div>
+        <div style="font-size:13px;color:var(--muted)" id="scoreDesc"></div>
       </div>
-      <div class="score-breakdown">
-        <div><div class="sb-row"><span class="sl">基础分</span><span class="sv">50</span></div></div>
-        <div><div class="sb-row"><span class="sl">涨停/跌停比 1.12（37/33）</span><span class="sv">0</span></div><div class="sb-bar"><div class="fill" style="width:50%;background:var(--muted)"></div></div></div>
-        <div><div class="sb-row"><span class="sl">上涨占比 13.7%（普跌）</span><span class="sv down">-20</span></div><div class="sb-bar"><div class="fill" style="width:13.7%;background:var(--down)"></div></div></div>
-        <div><div class="sb-row"><span class="sl">两市成交 1.66万亿（缩量）</span><span class="sv down">-5</span></div><div class="sb-bar"><div class="fill" style="width:40%;background:var(--down)"></div></div></div>
-        <div><div class="sb-row"><span class="sl">封板率 63.8%（炸板 21 家）</span><span class="sv down">-5</span></div><div class="sb-bar"><div class="fill" style="width:63.8%;background:var(--down)"></div></div></div>
-      </div>
+      <div class="score-breakdown" id="scoreBreakdown"></div>
     </div>
-
     <div class="card">
       <h2>涨停封板与炸板 <span class="hint">真实数据</span></h2>
-      <div class="zb-stats">
-        <div class="zb-stat"><div class="zlabel">涨停封板</div><div class="zval up">37</div></div>
-        <div class="zb-stat"><div class="zlabel">炸板家数</div><div class="zval" style="color:var(--warn)">21</div></div>
-        <div class="zb-stat"><div class="zlabel">封板率</div><div class="zval">63.8%</div></div>
-        <div class="zb-stat"><div class="zlabel">炸板率</div><div class="zval" style="color:var(--warn)">36.2%</div></div>
-      </div>
+      <div class="zb-stats" id="zbStats"></div>
       <div class="zb-list" id="zbList"></div>
-      <div class="intl-note" style="margin-top:10px">炸板率偏高（近四成涨停板未能封住），说明做多情绪不稳固、承接力度弱，与「退潮期」判断一致。</div>
+      <div class="intl-note" style="margin-top:10px" id="zbNote"></div>
     </div>
-
     <div class="card">
-      <h2>情绪周期 <span class="hint">涨停跌停比 1.12</span></h2>
-      <div class="plan-box">
-        涨停 37 家略多于跌停 33 家，但结合 <b>85% 个股下跌</b> 的普跌结构与 <b>近四成炸板</b>，实际处于<b>退潮期</b>：涨停多来自影视院线、传媒等题材与银行、农业等防御方向，成长主线缺失，赚钱效应差，需警惕「假强势」。
-      </div>
+      <h2>情绪周期 <span class="hint" id="emotionHint"></span></h2>
+      <div class="plan-box" id="emotionNote"></div>
       <div style="font-size:13px;color:var(--muted);line-height:1.8">
         情绪周期五阶段：<b style="color:var(--up)">高潮</b> → <b>发酵</b> → <b>分歧</b> → <b>退潮</b> → <b style="color:var(--down)">冰点</b><br>
-        当前位置：<b>退潮偏冰点</b>（防御切换，主线缺失）
+        当前位置：<b id="emotionPos"></b>
       </div>
     </div>
-
     <div class="card">
-      <h2>涨跌分布 <span class="hint">沪深A股 · 涨/平/跌 + 涨停/跌停 · 精确统计</span></h2>
-      <div id="distChart"><div class="dist-row"><div class="tag">涨停</div><div class="bar-wrap"><div class="bar" style="background:var(--up);width:8.9%"></div></div><div class="cnt">37</div></div><div class="dist-row"><div class="tag">上涨</div><div class="bar-wrap"><div class="bar" style="background:var(--up);width:39.3%"></div></div><div class="cnt">728</div></div><div class="dist-row"><div class="tag">平盘</div><div class="bar-wrap"><div class="bar" style="background:var(--muted);width:10.4%"></div></div><div class="cnt">51</div></div><div class="dist-row"><div class="tag">下跌</div><div class="bar-wrap"><div class="bar" style="background:var(--down);width:100.0%"></div></div><div class="cnt">4715</div></div><div class="dist-row"><div class="tag">跌停</div><div class="bar-wrap"><div class="bar" style="background:var(--down);width:8.4%"></div></div><div class="cnt">33</div></div></div>
+      <h2>涨跌分布 <span class="hint">沪深A股 · 涨/平/跌 + 涨停/跌停</span></h2>
+      <div id="distChart"></div>
     </div>
   </section>
 
   <section class="panel" id="panel-sector">
     <div class="card">
-      <h2>龙头板块 · 多时间维度 <span class="hint">龙头股为对应周期涨幅最大个股 · 精确数据</span></h2>
+      <h2>龙头板块 · 多时间维度 <span class="hint">龙头股为对应周期涨幅最大个股</span></h2>
       <div class="leader-grid" id="leaderGrid"></div>
     </div>
     <div class="card" style="overflow-x:auto">
@@ -256,12 +253,11 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
       </table>
     </div>
     <div class="card" style="overflow-x:auto">
-      <h2>板块跌幅榜 <span class="hint">真实数据 · 附各板块领跌股（当天跌幅最大）</span></h2>
+      <h2>板块跌幅榜 <span class="hint">真实数据 · 附各板块领跌股</span></h2>
       <table id="sectorDownTable">
         <thead><tr><th>板块</th><th style="text-align:left">领跌股</th><th>当天</th><th>1周</th><th>1月</th><th>3月</th><th>6月</th></tr></thead>
         <tbody id="sectorDownTbody"></tbody>
       </table>
-      <div class="intl-note" style="margin-top:10px">领跌股为板块内当天跌幅最大个股（来源：东方财富妙想选股器；部分板块因数据源临时限流暂缺，标注「—」）。</div>
     </div>
     <div class="card">
       <h2>主线研判 <span class="hint">分析判断</span></h2>
@@ -289,15 +285,11 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
   <section class="panel" id="panel-review">
     <div class="card">
       <h2>明日一句话计划</h2>
-      <div class="plan-box">
-        <b>普跌防御日，严控仓位（≤3成）。</b>规避破位的成长股（元件/通信/半导体），防御方向（银行/红利）可少量持有；重点盯上证 3600 整数关与量能变化，未见放量企稳前不抄底。
-      </div>
+      <div class="plan-box" id="planBox"></div>
     </div>
     <div class="card">
       <h2>明日剧本（三情景）</h2>
-      <div class="scen"><div class="st st-opt">乐观</div><div class="tx">超跌反弹：上证守住 3600 并放量反包，成长方向技术性修复，可小仓位博弈反弹龙头。</div></div>
-      <div class="scen"><div class="st st-mid">中性</div><div class="tx">缩量震荡分化：防御板块继续占优，成长弱势整理，观望为主，不做左侧。</div></div>
-      <div class="scen"><div class="st st-pes">悲观</div><div class="tx">破位下行：跌破 3600 且放量，情绪冰点延续，D级持仓加速下探，空仓等拐点。</div></div>
+      <div id="scenarioList"></div>
     </div>
     <div class="card">
       <h2>纪律审计 <span class="hint">分析判断</span></h2>
@@ -306,58 +298,292 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
   </section>
 </main>
 
-<footer class="disclaimer">
-  数据来源：东方财富（国际指数、涨跌停/炸板、自选股行情）、东方财富妙想选股器（板块排名、周期龙头股、领跌股）、新浪财经（指数、北证50）。行情为 2026-11-13 收盘一次性快照，复盘专用，页面不发起实时数据请求，以交易所为准。<br>
-  <span style="color:var(--warn)">数据说明：本次腾讯自选股(westock-mcp)连接失效，已切换东财/新浪/妙想选股器兜底；部分板块多周期涨幅与领跌股因数据源临时限流暂缺（标注「—」），待数据源恢复后可补齐。</span><br>
+<footer class="disclaimer" id="footer" style="display:none">
+  数据来源：腾讯自选股、东方财富、东方财富妙想选股器、新浪财经。历史数据存储于云数据库，本页按日期回溯展示，行情为各交易日收盘快照，以交易所为准。<br>
   ⚠️ 本页面由 AI 基于公开数据整理生成，仅供参考，不构成任何投资建议。投资有风险，决策需谨慎。
 </footer>
 
 <script>
-const STOCKS = [{"code": "sz000001", "name": "平安银行", "etf": false, "price": 12.07, "chg": 2.37, "ma5": 11.864, "ma10": 11.782, "ma20": 11.604, "pos": "5/10/20上方", "stop": 11.78, "dist": 2.5, "dims": {"trend": 30, "vol": 20, "strength": 15, "sector": 15, "risk": 10}, "total": 90, "grade": "A", "sector": "股份制银行", "sect_chg": 1.21, "vr": 1.91}, {"code": "sh513100", "name": "纳指ETF国泰", "etf": true, "price": 2.23, "chg": 0.54, "ma5": 2.207, "ma10": 2.21, "ma20": 2.246, "pos": "5/10上方", "stop": 2.14, "dist": 4.2, "dims": {"trend": 24, "vol": 15, "strength": 10, "sector": 10, "risk": 10}, "total": 69, "grade": "C", "sector": "ETF", "sect_chg": null, "vr": 0.65}, {"code": "sz002627", "name": "三峡旅游", "etf": false, "price": 6.44, "chg": 0.94, "ma5": 6.42, "ma10": 6.468, "ma20": 6.456, "pos": "全线下方", "stop": 6.04, "dist": 6.6, "dims": {"trend": 12, "vol": 20, "strength": 10, "sector": 10, "risk": 15}, "total": 67, "grade": "C", "sector": "旅游景区", "sect_chg": null, "vr": 1.16}, {"code": "sh600276", "name": "恒瑞医药", "etf": false, "price": 48.07, "chg": 0.29, "ma5": 48.4, "ma10": 48.967, "ma20": 48.08, "pos": "全线下方", "stop": 45.55, "dist": 5.5, "dims": {"trend": 12, "vol": 15, "strength": 10, "sector": 10, "risk": 15}, "total": 62, "grade": "C", "sector": "化学制药", "sect_chg": null, "vr": 0.75}, {"code": "sz300059", "name": "东方财富", "etf": false, "price": 18.29, "chg": 0.33, "ma5": 18.528, "ma10": 18.717, "ma20": 18.384, "pos": "全线下方", "stop": 17.6, "dist": 3.9, "dims": {"trend": 12, "vol": 20, "strength": 10, "sector": 10, "risk": 10}, "total": 62, "grade": "C", "sector": "证券", "sect_chg": null, "vr": 1.04}, {"code": "sz002415", "name": "海康威视", "etf": false, "price": 34.45, "chg": 1.68, "ma5": 34.416, "ma10": 34.834, "ma20": 34.281, "pos": "20日线上", "stop": 34.28, "dist": 0.5, "dims": {"trend": 18, "vol": 15, "strength": 10, "sector": 10, "risk": 5}, "total": 58, "grade": "B", "sector": "计算机设备", "sect_chg": null, "vr": 0.99}, {"code": "sh601888", "name": "中国中免", "etf": false, "price": 51.8, "chg": 0.52, "ma5": 52.406, "ma10": 53.025, "ma20": 51.381, "pos": "20日线上", "stop": 51.38, "dist": 0.8, "dims": {"trend": 18, "vol": 15, "strength": 10, "sector": 10, "risk": 5}, "total": 58, "grade": "B", "sector": "一般零售", "sect_chg": null, "vr": 0.98}, {"code": "sh688981", "name": "中芯国际", "etf": false, "price": 110.5, "chg": -1.09, "ma5": 109.66, "ma10": 108.33, "ma20": 104.598, "pos": "5/10/20上方", "stop": 108.33, "dist": 2.0, "dims": {"trend": 30, "vol": 8, "strength": 5, "sector": 5, "risk": 10}, "total": 58, "grade": "B", "sector": "半导体", "sect_chg": -2.92, "vr": 1.79}, {"code": "sh512070", "name": "证券保险ETF易方达", "etf": true, "price": 0.746, "chg": 0.4, "ma5": 0.753, "ma10": 0.759, "ma20": 0.751, "pos": "全线下方", "stop": 0.73, "dist": 2.2, "dims": {"trend": 12, "vol": 15, "strength": 10, "sector": 10, "risk": 10}, "total": 57, "grade": "C", "sector": "ETF", "sect_chg": null, "vr": 0.42}, {"code": "sh600298", "name": "安琪酵母", "etf": false, "price": 36.7, "chg": 0.22, "ma5": 37.128, "ma10": 37.465, "ma20": 37.125, "pos": "全线下方", "stop": 35.56, "dist": 3.2, "dims": {"trend": 12, "vol": 15, "strength": 10, "sector": 10, "risk": 10}, "total": 57, "grade": "C", "sector": "调味发酵品", "sect_chg": null, "vr": 0.99}, {"code": "sh600584", "name": "长电科技", "etf": false, "price": 52.7, "chg": -3.21, "ma5": 53.272, "ma10": 52.158, "ma20": 53.792, "pos": "全线下方", "stop": 47.04, "dist": 12.0, "dims": {"trend": 12, "vol": 12, "strength": 5, "sector": 5, "risk": 15}, "total": 49, "grade": "D", "sector": "半导体", "sect_chg": -2.92, "vr": 0.96}, {"code": "sh600293", "name": "三峡新材", "etf": false, "price": 3.92, "chg": -7.33, "ma5": 4.042, "ma10": 3.936, "ma20": 4.091, "pos": "全线下方", "stop": 3.31, "dist": 18.4, "dims": {"trend": 12, "vol": 8, "strength": 5, "sector": 5, "risk": 15}, "total": 45, "grade": "D", "sector": "玻璃玻纤", "sect_chg": -6.07, "vr": 1.0}, {"code": "sz159227", "name": "航空航天ETF华夏", "etf": true, "price": 0.935, "chg": -2.2, "ma5": 0.955, "ma10": 0.952, "ma20": 0.957, "pos": "全线下方", "stop": 0.91, "dist": 2.7, "dims": {"trend": 12, "vol": 8, "strength": 5, "sector": 10, "risk": 10}, "total": 45, "grade": "D", "sector": "ETF", "sect_chg": null, "vr": 1.27}, {"code": "sh603259", "name": "药明康德", "etf": false, "price": 146.3, "chg": -2.69, "ma5": 149.186, "ma10": 147.013, "ma20": 145.623, "pos": "20日线上", "stop": 145.62, "dist": 0.5, "dims": {"trend": 18, "vol": 12, "strength": 5, "sector": 5, "risk": 5}, "total": 45, "grade": "D", "sector": "医疗服务", "sect_chg": -3.01, "vr": 0.69}, {"code": "sh513180", "name": "恒生科技ETF华夏", "etf": true, "price": 0.478, "chg": -2.65, "ma5": 0.498, "ma10": 0.497, "ma20": 0.491, "pos": "全线下方", "stop": 0.47, "dist": 1.7, "dims": {"trend": 12, "vol": 12, "strength": 5, "sector": 10, "risk": 5}, "total": 44, "grade": "D", "sector": "ETF", "sect_chg": null, "vr": 0.94}];
-const INTL = [{"market": "美股", "items": [{"name": "道琼斯", "price": "52,347.55", "chg": 0.1}, {"name": "标普500", "price": "7,561.67", "chg": -0.4}, {"name": "纳斯达克", "price": "25,136.27", "chg": -0.91}]}, {"market": "港股", "items": [{"name": "恒生指数", "price": "23,637.60", "chg": -1.55}, {"name": "恒生科技指数", "price": "3,813.19", "chg": -3.02}, {"name": "国企指数", "price": "7,937.53", "chg": -1.48}]}, {"market": "日股", "items": [{"name": "日经225", "price": "61,142.35", "chg": 0.53}]}, {"market": "韩股", "items": [{"name": "韩国KOSPI", "price": "5,290.53", "chg": -0.98}]}];
-const LEADERS = {"w1": [{"name": "厨卫电器", "v": 6.08, "ld": "日出东方", "lc": 54.62}, {"name": "影视院线", "v": 5.72, "ld": "幸福蓝海", "lc": 22.63}, {"name": "渔业", "v": 5.32, "ld": "好当家", "lc": 22.97}, {"name": "汽车服务", "v": 4.43, "ld": "阿尔特", "lc": 27.14}, {"name": "通信设备", "v": 4.36, "ld": "宇特光电", "lc": 48.13}, {"name": "国有大型银行Ⅱ", "v": 3.18, "ld": "工商银行", "lc": 4.86}], "m1": [{"name": "养殖业", "v": 12.99, "ld": "东瑞股份", "lc": 32.89}, {"name": "小家电", "v": 11.92, "ld": "九阳股份", "lc": 54.53}, {"name": "影视院线", "v": 11.39, "ld": "上海电影", "lc": 44.06}, {"name": "数字媒体", "v": 10.57, "ld": "凡拓数创", "lc": 125.23}, {"name": "白酒Ⅱ", "v": 8.54, "ld": "皇台酒业", "lc": 37.4}, {"name": "航天装备Ⅱ", "v": 8.3, "ld": "电科蓝天", "lc": 22.53}], "m3": [{"name": "数字媒体", "v": 23.95, "ld": "芒果超媒", "lc": 102.31}, {"name": "影视院线", "v": 22.44, "ld": "上海电影", "lc": 137.36}, {"name": "国有大型银行Ⅱ", "v": 18.63, "ld": "交通银行", "lc": 24.71}, {"name": "出版", "v": 16.0, "ld": "新华传媒", "lc": 159.09}, {"name": "养殖业", "v": 14.09, "ld": "东瑞股份", "lc": 53.23}, {"name": "小家电", "v": 9.93, "ld": "九阳股份", "lc": 194.6}], "m6": [{"name": "国有大型银行Ⅱ", "v": 20.31, "ld": "交通银行", "lc": 31.01}, {"name": "医疗服务", "v": 17.77, "ld": "万邦医药", "lc": 98.62}, {"name": "股份制银行Ⅱ", "v": 10.4, "ld": "浦发银行", "lc": 20.08}, {"name": "数字媒体", "v": 9.82, "ld": "凡拓数创", "lc": 84.59}, {"name": "城商行Ⅱ", "v": 9.14, "ld": "北京银行", "lc": 24.61}, {"name": "农商行Ⅱ", "v": 5.23, "ld": "江阴银行", "lc": 15.98}]};
-const TODAY_SECTORS = [{"name": "影视院线", "today": 3.5, "w1": 5.72, "m1": 11.39, "m3": 22.44, "m6": 4.71, "ld": "幸福蓝海", "lc": 20.01}, {"name": "白色家电", "today": 2.68, "w1": null, "m1": null, "m3": null, "m6": 4.65, "ld": "美的集团", "lc": 2.91}, {"name": "养殖业", "today": 2.35, "w1": 2.6, "m1": 12.99, "m3": 14.09, "m6": null, "ld": "天邦食品", "lc": 10.0}, {"name": "白酒Ⅱ", "today": 1.81, "w1": null, "m1": 8.54, "m3": null, "m6": null, "ld": "古井贡酒", "lc": 5.86}, {"name": "城商行Ⅱ", "today": 1.76, "w1": null, "m1": null, "m3": 9.42, "m6": 9.14, "ld": "青岛银行", "lc": 3.65}, {"name": "饲料", "today": 1.7, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "金新农", "lc": 10.06}, {"name": "国有大型银行Ⅱ", "today": 1.56, "w1": 3.18, "m1": null, "m3": 18.63, "m6": 20.31, "ld": "中国银行", "lc": 1.99}, {"name": "农商行Ⅱ", "today": 1.3, "w1": null, "m1": null, "m3": null, "m6": 5.23, "ld": "沪农商行", "lc": 2.18}, {"name": "煤炭开采", "today": 1.24, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "电视广播Ⅱ", "today": 1.22, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "湖北广电", "lc": 10.1}];
-const SECTOR_DOWN = [{"name": "元件", "today": -8.55, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "景旺电子", "lc": -10.0}, {"name": "通信设备", "today": -6.29, "w1": 4.36, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "玻璃玻纤", "today": -6.07, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "非金属材料Ⅱ", "today": -5.48, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "地面兵装Ⅱ", "today": -4.46, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "其他电子Ⅱ", "today": -4.02, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "塑料", "today": -4.01, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "电子化学品Ⅱ", "today": -3.92, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}, {"name": "通用设备", "today": -3.87, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "大业股份", "lc": -10.01}, {"name": "房地产服务", "today": -3.78, "w1": null, "m1": null, "m3": null, "m6": null, "ld": "", "lc": null}];
-const DIST = [{"tag": "涨停", "n": 37, "c": "up"}, {"tag": "上涨", "n": 728, "c": "up"}, {"tag": "平盘", "n": 51, "c": "flat"}, {"tag": "下跌", "n": 4715, "c": "down"}, {"tag": "跌停", "n": 33, "c": "down"}];
-const ZB = ["飞亚达", "中成股份", "模塑科技", "北京文化", "博纳影业", "泰嘉股份", "旋极信息", "华是科技", "动力源", "天地源", "共进股份", "富佳股份", "永新光学", "和顺石油", "大胜达", "凯迪股份", "龙建股份", "宁波中百", "洪通燃气", "天安新材", "锋龙股份"];
+// ===== 云服务配置 =====
+const CLOUD_CONFIG = {
+  endpoint: "https://stock-review-dashboard-22376.app.workbuddy.host",
+  oauthRelayBaseUrl: "https://www.workbuddy.cn/v2/as/genie-baas/oauth",
+  publishableKey: "wbpk_3nDZ8SaXuRpaEnS9B3eHIs_F0HFMNGPG45ELc8ekFNnQ8GCfiFELLly"
+};
 
-function fmt(n){if(n===null||n===undefined)return "—";return n>=0?"+"+n.toFixed(2):n.toFixed(2)}
-function cls(chg){if(chg===null||chg===undefined)return "";return chg>0?"up":chg<0?"down":""}
-function posCls(pos){if(pos==="5/10/20上方")return "pos-strong";if(pos==="全线下方")return "pos-weak";return "pos-mid"}
+// ===== 全局状态 =====
+let cloud = null;
+let SNAPS = [];        // 全部 daily_snapshot（升序）
+let STOCKS_ALL = [];   // 全部 stock_daily
+let CUR = null;        // 当前选中快照
+let CUR_STOCKS = [];   // 当前日期个股
 
-function renderIntl(){
-  document.getElementById("intlGrid").innerHTML = INTL.map(g=>`
-    <div class="intl-group"><div class="gh">${g.market}</div>
-      ${g.items.map(i=>`<div class="ir"><span>${i.name}</span><span class="iv"><span class="ip">${i.price}</span><span class="${cls(i.chg)}">${fmt(i.chg)}%</span></span></div>`).join("")}
-    </div>`).join("");
+// ===== 工具函数 =====
+function fmt(n){ if(n===null||n===undefined) return "—"; return n>=0?"+"+Number(n).toFixed(2):Number(n).toFixed(2) }
+function cls(chg){ if(chg===null||chg===undefined) return ""; return chg>0?"up":chg<0?"down":"" }
+function posCls(pos){ if(pos==="5/10/20上方") return "pos-strong"; if(pos==="全线下方") return "pos-weak"; return "pos-mid" }
+function dkey(date){ return String(date).slice(0,10) }
+function esc(s){ return String(s==null?"":s) }
+
+// ===== 启动 =====
+async function boot(){
+  try {
+    cloud = WorkBuddyCloud.createWorkBuddyCloud({
+      endpoint: CLOUD_CONFIG.endpoint,
+      oauthRelayBaseUrl: CLOUD_CONFIG.oauthRelayBaseUrl,
+      publishableKey: CLOUD_CONFIG.publishableKey
+    });
+    const { data: snaps, error: e1 } = await cloud.database
+      .from('daily_snapshot').select('*').order('trade_date', { ascending: true });
+    if (e1) throw e1;
+    const { data: stocks, error: e2 } = await cloud.database
+      .from('stock_daily').select('*').order('trade_date', { ascending: true });
+    if (e2) throw e2;
+
+    SNAPS = snaps || [];
+    STOCKS_ALL = stocks || [];
+    if (SNAPS.length === 0) {
+      document.getElementById('loadHint').textContent = '数据库暂无历史数据。';
+      return;
+    }
+    buildDateSelector();
+    renderTrend();
+    document.getElementById('loadHint').style.display = 'none';
+    document.getElementById('tabs').style.display = 'flex';
+    document.getElementById('main').style.display = 'block';
+    document.getElementById('footer').style.display = 'block';
+    selectDate(dkey(SNAPS[SNAPS.length-1].trade_date));
+  } catch(e) {
+    document.getElementById('loadHint').innerHTML =
+      '数据加载失败：' + (e && e.message ? e.message : String(e)) + '<br>请检查网络后刷新重试。';
+  }
 }
-function renderLeaders(){
-  const cols=[{key:"w1",label:"1周"},{key:"m1",label:"1月"},{key:"m3",label:"3月"},{key:"m6",label:"6月"}];
-  document.getElementById("leaderGrid").innerHTML = cols.map(c=>`
-    <div class="leader-col"><div class="lc-h">${c.label} 龙头板块</div>
-      ${LEADERS[c.key].map(s=>`<div class="lc-item">
-        <div class="lc-main"><span class="lc-name">${s.name}</span><span class="${cls(s.v)}">${fmt(s.v)}%</span></div>
-        <div class="lc-ld">龙头 <b>${s.ld||"—"}</b> ${s.lc!=null?`<span class="${cls(s.lc)}">${fmt(s.lc)}%</span>`:''}</div>
+
+function buildDateSelector(){
+  const sel = document.getElementById('dateSelect');
+  sel.innerHTML = SNAPS.slice().reverse().map(s => {
+    const d = dkey(s.trade_date);
+    const label = (s.date_label || d).replace(' 收盘快照','');
+    return `<option value="${d}">${label}</option>`;
+  }).join('');
+}
+
+function stepDate(dir){
+  const sel = document.getElementById('dateSelect');
+  const idx = sel.selectedIndex;
+  const next = idx + (dir === 1 ? -1 : 1); // select 是降序
+  if (next >= 0 && next < sel.options.length) {
+    sel.selectedIndex = next;
+    selectDate(sel.value);
+  }
+}
+
+function selectDate(date){
+  const sel = document.getElementById('dateSelect');
+  for (let i=0;i<sel.options.length;i++){ if(sel.options[i].value===date){ sel.selectedIndex=i; break; } }
+  CUR = SNAPS.find(s => dkey(s.trade_date) === date) || null;
+  CUR_STOCKS = STOCKS_ALL.filter(s => dkey(s.trade_date) === date);
+  if (!CUR) return;
+  renderOverview(); renderEmotion(); renderSector(); renderStocks(); renderScores(); renderReview();
+}
+
+function switchTab(t){
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+  document.getElementById("panel-"+t).classList.add("active");
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
+  window.scrollTo({top:0});
+}
+
+// ===== 总览 =====
+function renderOverview(){
+  const c = CUR;
+  const zt = c.zt||0, dt = c.dt||0;
+  const scoreColor = c.market_score>=60 ? 'var(--up)' : c.market_score>=40 ? 'var(--warn)' : 'var(--down)';
+  const amountNum = parseFloat(c.amount)||0;
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi"><div class="label">市场环境评分</div><div class="val" style="color:${scoreColor}">${c.market_score}<small> /100</small></div><div class="desc">${esc(c.emotion_desc)}</div></div>
+    <div class="kpi"><div class="label">情绪周期</div><div class="val" style="font-size:20px">${esc(c.emotion)}</div><div class="desc">${esc(c.emotion_desc)}</div></div>
+    <div class="kpi"><div class="label">涨停 / 跌停</div><div class="val"><span class="up">${zt}</span><span style="color:var(--muted)"> / </span><span class="down">${dt}</span></div><div class="desc">炸板 ${c.zb||0} · 封板率 ${c.feng_rate||0}%</div></div>
+    <div class="kpi"><div class="label">两市成交</div><div class="val">${c.amount}<small> 万亿</small></div><div class="desc">${amountNum<1.5?'缩量':amountNum>2.2?'放量':'正常'} · ${esc(c.emotion)}</div></div>`;
+
+  // 指数
+  document.getElementById('idxHint').textContent = dkey(c.trade_date) + ' 收盘';
+  const idx = c.index_json || [];
+  document.getElementById('idxList').innerHTML = idx.map(i=>{
+    const [n, code, p, chg] = i;
+    return `<div class="idx-row"><div class="nm">${esc(n)}<small>${esc(code)}</small></div><div><div class="pr">${esc(p)}</div><div class="chg ${cls(chg)}">${fmt(chg)}%</div></div></div>`;
+  }).join('');
+
+  // 涨跌家数
+  const up = c.up_cnt||0, down = c.down_cnt||0, flat = c.flat_cnt||0, total = c.total_cnt||(up+down+flat);
+  const downPct = total ? (down/total*100).toFixed(1) : 0;
+  const flatPct = total ? (flat/total*100).toFixed(1) : 0;
+  const upPct = total ? (100 - downPct - flatPct).toFixed(1) : 0;
+  document.getElementById('breadthHint').textContent = '全市场 ' + total + ' 家';
+  document.getElementById('pieChart').style.background = `conic-gradient(var(--down) 0 ${downPct}%, var(--muted) ${downPct}% ${Number(downPct)+Number(flatPct)}%, var(--up) ${Number(downPct)+Number(flatPct)}% 100%)`;
+  document.getElementById('piePct').textContent = downPct + '%';
+  document.getElementById('breadthNums').innerHTML = `
+    <div class="bn-row"><span class="bn-dot" style="background:var(--up)"></span>上涨<b class="up">${up}</b></div>
+    <div class="bn-row"><span class="bn-dot" style="background:var(--muted)"></span>平盘<b>${flat}</b></div>
+    <div class="bn-row"><span class="bn-dot" style="background:var(--down)"></span>下跌<b class="down">${down}</b></div>`;
+  document.getElementById('breadthNote').textContent =
+    `上涨占比仅 ${c.up_ratio}%，跌停 ${dt} 家 远超涨停 ${zt} 家，赚钱效应极弱。${esc(c.emotion_desc)}。`;
+
+  // 国际指数
+  document.getElementById('intlHint').textContent = '美股 / 港股 / 日股 / 韩股 · ' + dkey(c.trade_date);
+  const intl = c.intl_json || [];
+  document.getElementById('intlGrid').innerHTML = intl.map(g=>`
+    <div class="intl-group"><div class="gh">${esc(g.market)}</div>
+      ${(g.items||[]).map(i=>`<div class="ir"><span>${esc(i.name)}</span><span class="iv"><span class="ip">${esc(i.price)}</span><span class="${cls(i.chg)}">${fmt(i.chg)}%</span></span></div>`).join("")}
+    </div>`).join("");
+  document.getElementById('intlNote').textContent = '';
+}
+
+// ===== 趋势 =====
+function renderTrend(){
+  const dates = SNAPS.map(s => dkey(s.trade_date).slice(5));
+  const scores = SNAPS.map(s => s.market_score);
+  const ups = SNAPS.map(s => s.up_cnt);
+  const downs = SNAPS.map(s => s.down_cnt);
+  const zts = SNAPS.map(s => s.zt);
+  const dts = SNAPS.map(s => s.dt);
+  const amounts = SNAPS.map(s => parseFloat(s.amount)||0);
+
+  const grid = document.getElementById('trendGrid');
+  grid.innerHTML = '';
+  grid.appendChild(trendChart('市场评分', dates, [{name:'评分', data:scores, color:'var(--accent)'}], 0, 100));
+  grid.appendChild(trendChart('涨跌家数', dates, [
+    {name:'上涨', data:ups, color:'var(--up)'},
+    {name:'下跌', data:downs, color:'var(--down)'}
+  ], null, null));
+  grid.appendChild(trendChart('涨停 / 跌停', dates, [
+    {name:'涨停', data:zts, color:'var(--up)'},
+    {name:'跌停', data:dts, color:'var(--down)'}
+  ], null, null));
+  grid.appendChild(trendChart('两市成交(万亿)', dates, [{name:'成交额', data:amounts, color:'var(--accent)'}], null, null));
+}
+
+function trendChart(title, labels, series, fixedMin, fixedMax){
+  const card = document.createElement('div');
+  card.className = 'trend-card';
+  const W = 340, H = 130, padL = 30, padR = 10, padT = 10, padB = 22;
+  const allVals = series.flatMap(s => s.data);
+  let min = fixedMin !== null ? fixedMin : Math.min(...allVals);
+  let max = fixedMax !== null ? fixedMax : Math.max(...allVals);
+  if (min === max) { max = min + 1; }
+  const range = max - min;
+  const n = labels.length;
+  const x = i => n <= 1 ? W/2 : padL + i*(W-padL-padR)/(n-1);
+  const y = v => padT + (1 - (v-min)/range)*(H-padT-padB);
+
+  let paths = '';
+  series.forEach(s => {
+    const pts = s.data.map((v,i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    paths += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+  let dots = '';
+  series.forEach(s => {
+    s.data.forEach((v,i) => {
+      dots += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.5" fill="${s.color}"/>`;
+    });
+  });
+  let xlabels = '';
+  labels.forEach((lb,i) => {
+    if (n <= 8 || i % Math.ceil(n/8) === 0) {
+      xlabels += `<text x="${x(i).toFixed(1)}" y="${H-6}" font-size="9" fill="var(--muted)" text-anchor="middle">${lb}</text>`;
+    }
+  });
+  let ylabels = '';
+  for (let k=0;k<=2;k++){
+    const v = min + range*k/2;
+    ylabels += `<text x="${padL-4}" y="${(y(v)+3).toFixed(1)}" font-size="9" fill="var(--muted)" text-anchor="end">${Number(v).toFixed(0)}</text>`;
+  }
+  const legend = series.map(s=>`<span><span class="dot" style="background:${s.color}"></span>${s.name}</span>`).join('');
+  card.innerHTML = `<h3>${title}</h3>
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      ${ylabels}
+      ${paths}${dots}${xlabels}
+    </svg>
+    <div class="trend-legend">${legend}</div>`;
+  return card;
+}
+
+// ===== 情绪 =====
+function renderEmotion(){
+  const c = CUR;
+  const zt = c.zt||0, dt = c.dt||0, zb = c.zb||0, fr = c.feng_rate||0;
+  const ztDtRatio = dt ? (zt/dt).toFixed(2) : '—';
+  document.getElementById('scoreNum').textContent = c.market_score;
+  document.getElementById('scoreRing').setAttribute('stroke-dashoffset', (239*(1-c.market_score/100)).toFixed(1));
+  document.getElementById('scoreDesc').textContent =
+    c.market_score < 20 ? '冰点市：跌停潮、情绪恐慌，宜空仓或极轻仓防守，等待跌停收敛与放量企稳信号。'
+    : c.market_score < 40 ? '弱势市：跌停偏多、封板率偏低，宜轻仓防守（≤2成），规避破位加速下跌的个股。'
+    : c.market_score < 60 ? '震荡市：多空分歧，控制仓位（3-5成），聚焦主线，低吸不追高。'
+    : c.market_score < 80 ? '偏强市：赚钱效应回升，可适度加仓（5-7成），顺势做多主线龙头。'
+    : '强势市：普涨、情绪高潮，注意高潮后的分歧风险，可持股但勿满仓追高。';
+
+  const rows = [
+    {label:'涨停/跌停比 ' + ztDtRatio + '（'+zt+'/'+dt+'）', val: zt>=dt ? '偏多' : '偏空', pct: Math.min(zt/(zt+dt)*100,100), color: zt>=dt?'var(--up)':'var(--down)'},
+    {label:'上涨占比 ' + (c.up_ratio||0) + '%', val: (c.up_ratio||0)>=50 ? '偏多' : '偏空', pct: c.up_ratio||0, color: (c.up_ratio||0)>=50?'var(--up)':'var(--down)'},
+    {label:'封板率 ' + fr + '%', val: fr>=80?'强':fr>=60?'中':'弱', pct: fr, color: fr>=80?'var(--up)':fr>=60?'var(--warn)':'var(--down)'},
+    {label:'炸板率 ' + (100-fr).toFixed(1) + '%', val: (100-fr)>=40?'偏高':(100-fr)>=20?'正常':'偏低', pct: 100-fr, color: (100-fr)>=40?'var(--down)':'var(--warn)'}
+  ];
+  document.getElementById('scoreBreakdown').innerHTML = rows.map(r=>`
+    <div><div class="sb-row"><span class="sl">${r.label}</span><span class="sv" style="color:${r.color}">${r.val}</span></div>
+    <div class="sb-bar"><div class="fill" style="width:${r.pct}%;background:${r.color}"></div></div></div>`).join('');
+
+  document.getElementById('zbStats').innerHTML = `
+    <div class="zb-stat"><div class="zlabel">涨停封板</div><div class="zval up">${zt}</div></div>
+    <div class="zb-stat"><div class="zlabel">炸板家数</div><div class="zval" style="color:var(--warn)">${zb}</div></div>
+    <div class="zb-stat"><div class="zlabel">封板率</div><div class="zval">${fr}%</div></div>
+    <div class="zb-stat"><div class="zlabel">炸板率</div><div class="zval" style="color:var(--warn)">${(100-fr).toFixed(1)}%</div></div>`;
+  document.getElementById('zbList').innerHTML = (c.zb_list_json||[]).map(z=>`<span class="zb-chip">${esc(z)}</span>`).join('');
+  document.getElementById('zbNote').textContent = (100-fr)>=40 ? '炸板率偏高，做多情绪不稳固、承接力度弱。' : (100-fr)>=20 ? '炸板率正常。' : '炸板率偏低，封板牢固，情绪较稳。';
+
+  document.getElementById('emotionHint').textContent = '涨停跌停比 ' + ztDtRatio;
+  document.getElementById('emotionNote').textContent = (c.notes_json && c.notes_json.emotion_note) || '';
+  document.getElementById('emotionPos').textContent = c.emotion + '（' + esc(c.emotion_desc) + '）';
+
+  // 涨跌分布（sqrt 缩放）
+  const dist = c.dist_json || [];
+  const maxn = Math.max(...dist.map(d=>Math.sqrt(d.n||0)), 1);
+  document.getElementById('distChart').innerHTML = dist.map(d=>{
+    const color = d.c==='up' ? 'var(--up)' : d.c==='down' ? 'var(--down)' : 'var(--muted)';
+    const w = Math.max(3, Math.sqrt(d.n||0)/maxn*100);
+    return `<div class="dist-row"><div class="tag">${esc(d.tag)}</div><div class="bar-wrap"><div class="bar" style="background:${color};width:${w.toFixed(1)}%"></div></div><div class="cnt">${d.n}</div></div>`;
+  }).join('');
+}
+
+// ===== 板块 =====
+function renderSector(){
+  const c = CUR;
+  const leaders = c.leaders_json || {};
+  const cols = [{key:'w1',label:'1周'},{key:'m1',label:'1月'},{key:'m3',label:'3月'},{key:'m6',label:'6月'}];
+  document.getElementById('leaderGrid').innerHTML = cols.map(col=>`
+    <div class="leader-col"><div class="lc-h">${col.label} 龙头板块</div>
+      ${(leaders[col.key]||[]).map(s=>`<div class="lc-item">
+        <div class="lc-main"><span class="lc-name">${esc(s.name)}</span><span class="${cls(s.v)}">${fmt(s.v)}%</span></div>
+        <div class="lc-ld">龙头 <b>${esc(s.ld||'—')}</b> ${s.lc!=null?`<span class="${cls(s.lc)}">${fmt(s.lc)}%</span>`:''}</div>
       </div>`).join("")}
     </div>`).join("");
-}
-function renderTodaySectors(){
-  document.getElementById("sectorTbody").innerHTML = TODAY_SECTORS.map(s=>`
+
+  const hot = c.today_sectors_json || [];
+  document.getElementById('sectorTbody').innerHTML = hot.map(s=>`
     <tr>
-      <td><span class="nm">${s.name}</span></td>
-      <td style="text-align:left">${s.ld?`<span class="nm">${s.ld}</span> <span class="${cls(s.lc)}">${fmt(s.lc)}%</span>`:`<span style="color:var(--muted)">—</span>`}</td>
+      <td><span class="nm">${esc(s.name)}</span></td>
+      <td style="text-align:left">${s.ld?`<span class="nm">${esc(s.ld)}</span> <span class="${cls(s.lc)}">${fmt(s.lc)}%</span>`:`<span style="color:var(--muted)">—</span>`}</td>
       <td class="${cls(s.today)}">${fmt(s.today)}%</td>
       <td class="${cls(s.w1)}">${fmt(s.w1)}%</td>
       <td class="${cls(s.m1)}">${fmt(s.m1)}%</td>
       <td class="${cls(s.m3)}">${fmt(s.m3)}%</td>
       <td class="${cls(s.m6)}">${fmt(s.m6)}%</td>
     </tr>`).join("");
-}
-function renderSectorDown(){
-  document.getElementById("sectorDownTbody").innerHTML = SECTOR_DOWN.map(s=>{
-    const ldStr = s.ld ? `<span class="nm">${s.ld}</span> <span class="${cls(s.lc)}">${fmt(s.lc)}%</span>` : `<span style="color:var(--muted)">—</span>`;
+
+  const down = c.sector_down_json || [];
+  document.getElementById('sectorDownTbody').innerHTML = down.map(s=>{
+    const ldStr = s.ld ? `<span class="nm">${esc(s.ld)}</span> <span class="${cls(s.lc)}">${fmt(s.lc)}%</span>` : `<span style="color:var(--muted)">—</span>`;
     return `<tr>
-      <td><span class="nm">${s.name}</span></td>
+      <td><span class="nm">${esc(s.name)}</span></td>
       <td style="text-align:left">${ldStr}</td>
       <td class="${cls(s.today)}">${fmt(s.today)}%</td>
       <td class="${cls(s.w1)}">${fmt(s.w1)}%</td>
@@ -366,69 +592,73 @@ function renderSectorDown(){
       <td class="${cls(s.m6)}">${fmt(s.m6)}%</td>
     </tr>`;
   }).join("");
+
+  document.getElementById('sectorInsight').textContent = (c.notes_json && c.notes_json.insight) || '';
 }
-function renderInsight(){
-  document.getElementById("sectorInsight").innerHTML =
-    `短线（1周）主线在传媒链（影视院线、厨卫电器、渔业）与题材轮动，但通信设备当天暴跌 <b class="down">-6.29%</b> 需警惕高位回落；<br>` +
-    `中期（1月/3月）强势主线是<b>数字媒体、影视院线、养殖业</b>，银行（国有大行）3月/6月持续走强，防御 + 红利属性突出；<br>` +
-    `当天板块普跌，仅银行/白酒/家电/养殖逆势，属防御抱团；元件 <b class="down">-8.55%</b>、通信设备、玻璃玻纤领跌，成长方向在 1月/3月 维度持续走弱，反弹乏力，规避为主。`;
-}
-function renderZb(){
-  document.getElementById("zbList").innerHTML = ZB.map(z=>`<span class="zb-chip">${z}</span>`).join("");
-}
+
+// ===== 个股 =====
 function renderStocks(){
-  document.getElementById("stockTbody").innerHTML = STOCKS.map(s=>{
+  document.getElementById('stockTbody').innerHTML = CUR_STOCKS.map(s=>{
     const c = cls(s.chg);
-    const stopStr = s.dist<=0 ? `<span class="down">已破位</span>` : s.stop.toFixed(2);
+    const stopStr = s.dist<=0 ? `<span class="down">已破位</span>` : Number(s.stop).toFixed(2);
+    const priceStr = Number(s.price).toFixed(s.price<1?3:2);
     return `<tr>
-      <td><div class="nm">${s.name}</div><div class="code">${s.code}${s.etf?' <span style="color:var(--accent)">ETF</span>':''}</div></td>
-      <td>${s.price.toFixed(s.price<1?3:2)}</td>
+      <td><div class="nm">${esc(s.name)}</div><div class="code">${esc(s.code)}${s.etf?' <span style="color:var(--accent)">ETF</span>':''}</div></td>
+      <td>${priceStr}</td>
       <td class="${c}">${fmt(s.chg)}%</td>
-      <td><span class="pos-tag ${posCls(s.pos)}">${s.pos}</span></td>
+      <td><span class="pos-tag ${posCls(s.pos)}">${esc(s.pos)}</span></td>
       <td>${stopStr}</td>
       <td><span class="grade g-${s.grade}">${s.grade}</span></td>
     </tr>`;
   }).join("");
-}
-function renderScores(){
-  document.getElementById("scoreGrid").innerHTML = STOCKS.map(s=>{
-    const dims = [["趋势",s.dims.trend,30],["量价",s.dims.vol,20],["强度",s.dims.strength,20],["板块",s.dims.sector,15],["风险",s.dims.risk,15]];
-    const dimRows = dims.map(d=>`<div class="dim-row"><div class="dn">${d[0]}</div><div class="db"><div class="df" style="width:${d[1]/d[2]*100}%"></div></div><div class="dv">${d[1]}</div></div>`).join("");
-    return `<div class="score-card">
-      <div class="score-top"><div class="nm">${s.name}</div>
-        <div class="ring"><svg width="50" height="50"><circle cx="25" cy="25" r="20" stroke="var(--bg)" stroke-width="5" fill="none"/><circle cx="25" cy="25" r="20" stroke="var(--accent)" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="${(126-126*s.total/100).toFixed(1)}"/></svg><div class="num">${s.total}</div></div>
-      </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="${cls(s.chg)}">${fmt(s.chg)}%</span> · ${s.sector} · <span class="grade g-${s.grade}" style="vertical-align:middle">${s.grade}</span></div>
-      ${dimRows}
-    </div>`;
-  }).join("");
-}
-function renderGrades(){
+
   const order = {A:"A级 · 强势（持有/加仓）",B:"B级 · 健康（持有不动）",C:"C级 · 关注（盯盘观察）",D:"D级 · 处理（减仓/止损）"};
   const colors = {A:"up",B:"accent",C:"warn",D:"down"};
   let html = "";
   ["A","B","C","D"].forEach(g=>{
-    const list = STOCKS.filter(s=>s.grade===g);
+    const list = CUR_STOCKS.filter(s=>s.grade===g);
     if(list.length===0){ html += `<div style="font-size:13px;color:var(--muted);padding:5px 0">${order[g]}：无</div>`; return; }
     html += `<div style="padding:7px 0;border-bottom:1px solid var(--border)"><b style="color:var(--${colors[g]})">${order[g]}</b>（${list.length}只）<br>
       <span style="font-size:12px;color:var(--muted)">${list.map(s=>s.name).join("、")}</span></div>`;
   });
-  document.getElementById("gradeList").innerHTML = html;
+  document.getElementById('gradeList').innerHTML = html;
 }
-function renderAudit(){
-  const d = STOCKS.filter(s=>s.grade==="D");
-  const c = STOCKS.filter(s=>s.grade==="C");
+
+// ===== 评分 =====
+function renderScores(){
+  document.getElementById('scoreGrid').innerHTML = CUR_STOCKS.map(s=>{
+    const dims = s.dims_json || {trend:0,vol:0,strength:0,sector:0,risk:0};
+    const dimDefs = [["趋势",dims.trend,30],["量价",dims.vol,20],["强度",dims.strength,20],["板块",dims.sector,15],["风险",dims.risk,15]];
+    const dimRows = dimDefs.map(d=>`<div class="dim-row"><div class="dn">${d[0]}</div><div class="db"><div class="df" style="width:${(d[1]/d[2]*100).toFixed(0)}%"></div></div><div class="dv">${d[1]}</div></div>`).join("");
+    const total = s.total_score||0;
+    return `<div class="score-card">
+      <div class="score-top"><div class="nm">${esc(s.name)}</div>
+        <div class="ring"><svg width="50" height="50"><circle cx="25" cy="25" r="20" stroke="var(--bg)" stroke-width="5" fill="none"/><circle cx="25" cy="25" r="20" stroke="var(--accent)" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="126" stroke-dashoffset="${(126-126*total/100).toFixed(1)}"/></svg><div class="num">${total}</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px"><span class="${cls(s.chg)}">${fmt(s.chg)}%</span> · ${esc(s.sector)} · <span class="grade g-${s.grade}" style="vertical-align:middle">${s.grade}</span></div>
+      ${dimRows}
+    </div>`;
+  }).join("");
+}
+
+// ===== 复盘 =====
+function renderReview(){
+  const notes = CUR.notes_json || {};
+  document.getElementById('planBox').innerHTML = notes.plan ? `<b>${esc(notes.plan)}</b>` : '（暂无）';
+  document.getElementById('scenarioList').innerHTML = (notes.scenarios||[]).map(sc=>{
+    const stCls = sc.t==='乐观'?'st-opt':sc.t==='中性'?'st-mid':'st-pes';
+    return `<div class="scen"><div class="st ${stCls}">${esc(sc.t)}</div><div class="tx">${esc(sc.txt)}</div></div>`;
+  }).join('');
+
+  const d = CUR_STOCKS.filter(s=>s.grade==="D");
+  const cg = CUR_STOCKS.filter(s=>s.grade==="C");
   let html = `<div class="scen"><div class="st st-pes">止损</div><div class="tx">D级持仓 <b>${d.map(s=>s.name).join("、")||"无"}</b> 已破位或大跌，按纪律执行减仓/止损，不要因浮亏死扛。</div></div>`;
-  html += `<div class="scen"><div class="st st-mid">观察</div><div class="tx">C级持仓 <b>${c.map(s=>s.name).join("、")||"无"}</b> 处于均线下方，设好止损位，跌破立即离场。</div></div>`;
+  html += `<div class="scen"><div class="st st-mid">观察</div><div class="tx">C级持仓 <b>${cg.map(s=>s.name).join("、")||"无"}</b> 处于均线下方，设好止损位，跌破立即离场。</div></div>`;
   html += `<div class="scen"><div class="st st-opt">纪律</div><div class="tx">弱势市不追高、不抄底、不满仓。单票止损严格按「止损价」执行，跌破不留恋。</div></div>`;
-  document.getElementById("auditList").innerHTML = html;
+  document.getElementById('auditList').innerHTML = html;
 }
-function switchTab(t){
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
-  document.getElementById("panel-"+t).classList.add("active");
-  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));
-}
-renderIntl(); renderLeaders(); renderTodaySectors(); renderSectorDown(); renderInsight(); renderZb(); renderStocks(); renderScores(); renderGrades(); renderAudit();
+
+boot();
 </script>
 </body>
 </html>

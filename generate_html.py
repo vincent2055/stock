@@ -11,6 +11,9 @@ B = data['breadth']; P = data['pools']; SCORE = data['market_score']
 
 up = B['up']; down = B['down']; flat = B['flat']; total = B['total']; up_ratio = B['up_ratio']
 zt = P['zt']; dt = P['dt']; zb = P['zb']; fr = P['feng_rate']
+date_label = data.get('date_label', '2026-11-16 周一 收盘快照')
+amount = data.get('amount', '1.48')
+zt_dt_ratio = data.get('zt_dt_ratio', round(zt/dt, 2) if dt else 0)
 
 def fmt(v):
     if v is None:
@@ -31,13 +34,7 @@ def fclv(v):
     return f'<span class="{"up" if v>0 else "down" if v<0 else ""}">{fmt(v)}%</span>'
 
 # 指数
-idx = [
-    ("上证指数", "000001", "3634.35", -0.59),
-    ("深证成指", "399001", "10968.79", -2.05),
-    ("创业板指", "399006", "2426.08", -3.32),
-    ("科创50", "000688", "1279.66", -2.30),
-    ("北证50", "899050", "910.51", 0.27),
-]
+idx = data.get("index", [])
 idx_html = "".join(
     f'<div class="idx-row"><div class="nm">{n}<small>{c}</small></div><div><div class="pr">{p}</div><div class="chg {"up" if chg>0 else "down"}">{fmt(chg)}%</div></div></div>'
     for n, c, p, chg in idx
@@ -213,7 +210,7 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
 <header class="topbar">
   <div class="brand">
     <h1>复盘看盘工作台</h1>
-    <div class="sub"><span class="badge real">东财/新浪 · 真实数据</span> 2026-11-13 周五 收盘快照</div>
+    <div class="sub"><span class="badge real">腾讯自选股/东财/新浪 · 真实数据</span> 2026-11-16 周一 收盘快照</div>
   </div>
   <div class="top-actions">
     <span class="badge snapshot">复盘专用 · 一次快照 · 不实时刷新</span>
@@ -232,15 +229,15 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
 <main>
   <section class="panel active" id="panel-overview">
     <div class="kpi-grid">
-      <div class="kpi"><div class="label">市场环境评分</div><div class="val">__SCORE__<small> /100</small></div><div class="desc down">弱势 · 普跌防御</div></div>
-      <div class="kpi"><div class="label">情绪周期</div><div class="val" style="font-size:20px">退潮</div><div class="desc">普跌 · 防御切换</div></div>
+      <div class="kpi"><div class="label">市场环境评分</div><div class="val">__SCORE__<small> /100</small></div><div class="desc down">弱势 · 冰点普跌</div></div>
+      <div class="kpi"><div class="label">情绪周期</div><div class="val" style="font-size:20px">冰点</div><div class="desc">跌停潮 · 科技崩盘</div></div>
       <div class="kpi"><div class="label">涨停 / 跌停</div><div class="val"><span class="up">__ZT__</span><span style="color:var(--muted)"> / </span><span class="down">__DT__</span></div><div class="desc">炸板 __ZBCNT__ · 封板率 __FR__%</div></div>
-      <div class="kpi"><div class="label">两市成交</div><div class="val">1.66<small> 万亿</small></div><div class="desc down">量能低位</div></div>
+      <div class="kpi"><div class="label">两市成交</div><div class="val">1.48<small> 万亿</small></div><div class="desc down">缩量 · 冰点</div></div>
     </div>
 
     <div class="grid2">
       <div class="card">
-        <h2>指数概览 <span class="hint">2026-11-13 收盘</span></h2>
+        <h2>指数概览 <span class="hint">2026-11-16 收盘</span></h2>
         __IDX__
       </div>
       <div class="card">
@@ -254,15 +251,15 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
           </div>
         </div>
         <div class="plan-box" style="margin-top:10px;margin-bottom:0">
-          上涨占比仅 <b>__UP_RATIO__%</b>，赚钱效应弱。资金从元件、通信、半导体等成长方向撤离，涌入银行、白酒、家电、养殖等防御方向，属典型普跌防御日。
+          上涨占比仅 <b>__UP_RATIO__%</b>，跌停 <b class="down">__DT__ 家</b> 远超涨停 __ZT__ 家，赚钱效应极弱。资金从元件、通信设备、半导体等科技成长方向大幅撤离，涌入银行、家电、煤炭、调味品等防御方向，属典型<b>冰点普跌日</b>。
         </div>
       </div>
     </div>
     <div class="card">
-      <h2>国际指数 <span class="hint">美股 / 港股 / 日股 / 韩股 · 2026-11-13</span></h2>
+      <h2>国际指数 <span class="hint">美股 / 港股 / 日股 / 韩股 · 2026-11-16</span></h2>
       <div class="intl-grid" id="intlGrid"></div>
       <div class="intl-note">
-        全球风险偏好信号：恒生科技 <b class="down">-3.02%</b>、港股领跌，纳指 <b class="down">-0.91%</b>，日经 <span class="up">+0.53%</span> 逆势。外盘整体偏弱，对 A 股风险偏好形成压制。
+        全球风险偏好信号：日经 <b class="down">-2.42%</b>、KOSPI <b class="down">-3.59%</b> 领跌，美股纳指 <b class="down">-0.91%</b> 走弱，港股恒生 <span class="up">+0.43%</span> 微涨。外盘整体偏弱，对 A 股风险偏好形成压制。
       </div>
     </div>
   </section>
@@ -275,13 +272,13 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
           <svg width="88" height="88"><circle cx="44" cy="44" r="38" stroke="var(--bg)" stroke-width="10" fill="none"/><circle cx="44" cy="44" r="38" stroke="var(--down)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="__SCORE_OFFSET__"/></svg>
           <div class="num" style="font-size:22px">__SCORE__</div>
         </div>
-        <div style="font-size:13px;color:var(--muted)">弱势市：情绪退潮、封板率偏低、跌停家数偏多，宜<b>轻仓防守</b>，规避破位成长股，等待企稳信号。</div>
+        <div style="font-size:13px;color:var(--muted)">弱势市：跌停潮、情绪冰点、封板率偏低，宜<b>轻仓防守</b>（≤2成），规避破位加速下跌的科技成长股，等待放量企稳信号。</div>
       </div>
       <div class="score-breakdown">
         <div><div class="sb-row"><span class="sl">基础分</span><span class="sv">50</span></div></div>
         <div><div class="sb-row"><span class="sl">涨停/跌停比 __ZTR__（__ZT__/__DT__）</span><span class="sv">0</span></div><div class="sb-bar"><div class="fill" style="width:50%;background:var(--muted)"></div></div></div>
         <div><div class="sb-row"><span class="sl">上涨占比 __UP_RATIO__%（普跌）</span><span class="sv down">-20</span></div><div class="sb-bar"><div class="fill" style="width:__UP_RATIO__%;background:var(--down)"></div></div></div>
-        <div><div class="sb-row"><span class="sl">两市成交 1.66万亿（缩量）</span><span class="sv down">-5</span></div><div class="sb-bar"><div class="fill" style="width:40%;background:var(--down)"></div></div></div>
+        <div><div class="sb-row"><span class="sl">两市成交 1.48万亿（缩量）</span><span class="sv down">-5</span></div><div class="sb-bar"><div class="fill" style="width:40%;background:var(--down)"></div></div></div>
         <div><div class="sb-row"><span class="sl">封板率 __FR__%（炸板 __ZBCNT__ 家）</span><span class="sv down">-5</span></div><div class="sb-bar"><div class="fill" style="width:__FR__%;background:var(--down)"></div></div></div>
       </div>
     </div>
@@ -295,17 +292,17 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
         <div class="zb-stat"><div class="zlabel">炸板率</div><div class="zval" style="color:var(--warn)">__FRDOWN__%</div></div>
       </div>
       <div class="zb-list" id="zbList"></div>
-      <div class="intl-note" style="margin-top:10px">炸板率偏高（近四成涨停板未能封住），说明做多情绪不稳固、承接力度弱，与「退潮期」判断一致。</div>
+      <div class="intl-note" style="margin-top:10px">炸板率偏高（近三成涨停板未能封住），说明做多情绪不稳固、承接力度弱，与「冰点期」判断一致。</div>
     </div>
 
     <div class="card">
       <h2>情绪周期 <span class="hint">涨停跌停比 __ZTR__</span></h2>
       <div class="plan-box">
-        涨停 37 家略多于跌停 33 家，但结合 <b>85% 个股下跌</b> 的普跌结构与 <b>近四成炸板</b>，实际处于<b>退潮期</b>：涨停多来自影视院线、传媒等题材与银行、农业等防御方向，成长主线缺失，赚钱效应差，需警惕「假强势」。
+        涨停 <b class="up">__ZT__ 家</b> 明显少于跌停 <b class="down">__DT__ 家</b>（跌停潮），叠加 <b>约八成个股下跌</b> 的普跌结构与 <b>近四成炸板</b>，已进入<b>冰点期</b>：涨停多来自影视院线、电视广播等题材与银行、家电、煤炭等防御方向，科技成长主线全面崩盘，赚钱效应极差，需警惕「跌停潮后的惯性下杀」。
       </div>
       <div style="font-size:13px;color:var(--muted);line-height:1.8">
         情绪周期五阶段：<b style="color:var(--up)">高潮</b> → <b>发酵</b> → <b>分歧</b> → <b>退潮</b> → <b style="color:var(--down)">冰点</b><br>
-        当前位置：<b>退潮偏冰点</b>（防御切换，主线缺失）
+        当前位置：<b>冰点</b>（跌停潮 · 科技崩盘 · 防御抱团）
       </div>
     </div>
 
@@ -333,7 +330,7 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
         <thead><tr><th>板块</th><th style="text-align:left">领跌股</th><th>当天</th><th>1周</th><th>1月</th><th>3月</th><th>6月</th></tr></thead>
         <tbody id="sectorDownTbody"></tbody>
       </table>
-      <div class="intl-note" style="margin-top:10px">领跌股为板块内当天跌幅最大个股（来源：东方财富妙想选股器；部分板块因数据源临时限流暂缺，标注「—」）。</div>
+      <div class="intl-note" style="margin-top:10px">领跌股为板块内当天跌幅最大个股，来源：东方财富妙想选股器（精确获取）。</div>
     </div>
     <div class="card">
       <h2>主线研判 <span class="hint">分析判断</span></h2>
@@ -362,14 +359,14 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
     <div class="card">
       <h2>明日一句话计划</h2>
       <div class="plan-box">
-        <b>普跌防御日，严控仓位（≤3成）。</b>规避破位的成长股（元件/通信/半导体），防御方向（银行/红利）可少量持有；重点盯上证 3600 整数关与量能变化，未见放量企稳前不抄底。
+        <b>冰点普跌日，严控仓位（≤2成）。</b>规避破位加速下跌的科技成长股（元件/通信设备/半导体），防御方向（银行/红利/家电）可少量持有；重点盯上证 3600 整数关（今日收 3602.57，濒临跌破），未见放量企稳前不抄底。
       </div>
     </div>
     <div class="card">
       <h2>明日剧本（三情景）</h2>
-      <div class="scen"><div class="st st-opt">乐观</div><div class="tx">超跌反弹：上证守住 3600 并放量反包，成长方向技术性修复，可小仓位博弈反弹龙头。</div></div>
-      <div class="scen"><div class="st st-mid">中性</div><div class="tx">缩量震荡分化：防御板块继续占优，成长弱势整理，观望为主，不做左侧。</div></div>
-      <div class="scen"><div class="st st-pes">悲观</div><div class="tx">破位下行：跌破 3600 且放量，情绪冰点延续，D级持仓加速下探，空仓等拐点。</div></div>
+      <div class="scen"><div class="st st-opt">乐观</div><div class="tx">超跌反抽：上证守住 3600 并放量反包，科技股（半导体/元件）技术性修复，可小仓位博弈超跌反弹龙头。</div></div>
+      <div class="scen"><div class="st st-mid">中性</div><div class="tx">缩量阴跌分化：防御板块继续占优，科技弱势整理，观望为主，不做左侧。</div></div>
+      <div class="scen"><div class="st st-pes">悲观</div><div class="tx">破位下杀：跌破 3600 且放量，跌停潮延续，情绪冰点加深，D级持仓加速下探，空仓等拐点。</div></div>
     </div>
     <div class="card">
       <h2>纪律审计 <span class="hint">分析判断</span></h2>
@@ -379,8 +376,7 @@ footer.disclaimer{max-width:1080px;margin:0 auto;padding:0 16px 16px;font-size:1
 </main>
 
 <footer class="disclaimer">
-  数据来源：东方财富（国际指数、涨跌停/炸板、自选股行情）、东方财富妙想选股器（板块排名、周期龙头股、领跌股）、新浪财经（指数、北证50）。行情为 2026-11-13 收盘一次性快照，复盘专用，页面不发起实时数据请求，以交易所为准。<br>
-  <span style="color:var(--warn)">数据说明：本次腾讯自选股(westock-mcp)连接失效，已切换东财/新浪/妙想选股器兜底；部分板块多周期涨幅与领跌股因数据源临时限流暂缺（标注「—」），待数据源恢复后可补齐。</span><br>
+  数据来源：腾讯自选股（指数、涨跌分布、自选股行情、板块多周期）、东方财富（国际指数、涨停/跌停/炸板池）、东方财富妙想选股器（周期龙头股、领跌股）、新浪财经（北证50）。行情为 2026-11-16 收盘一次性快照，复盘专用，页面不发起实时数据请求，以交易所为准。<br>
   ⚠️ 本页面由 AI 基于公开数据整理生成，仅供参考，不构成任何投资建议。投资有风险，决策需谨慎。
 </footer>
 
@@ -441,9 +437,9 @@ function renderSectorDown(){
 }
 function renderInsight(){
   document.getElementById("sectorInsight").innerHTML =
-    `短线（1周）主线在传媒链（影视院线、厨卫电器、渔业）与题材轮动，但通信设备当天暴跌 <b class="down">-6.29%</b> 需警惕高位回落；<br>` +
-    `中期（1月/3月）强势主线是<b>数字媒体、影视院线、养殖业</b>，银行（国有大行）3月/6月持续走强，防御 + 红利属性突出；<br>` +
-    `当天板块普跌，仅银行/白酒/家电/养殖逆势，属防御抱团；元件 <b class="down">-8.55%</b>、通信设备、玻璃玻纤领跌，成长方向在 1月/3月 维度持续走弱，反弹乏力，规避为主。`;
+    `短线（1周）主线在银行（城商行 <span class="up">+4.02%</span>、国有大行 <span class="up">+3.43%</span>）、影视院线、电视广播与厨卫电器，防御 + 传媒属性突出，但元件 <b class="down">-8.71%</b>、通信设备 <b class="down">-8.67%</b>、半导体 <b class="down">-6.02%</b> 当天崩盘，成长方向全面破位；<br>` +
+    `中期（1月/3月）强势主线是<b>数字媒体、影视院线、养殖业、小家电</b>，银行（国有大行）3月 <span class="up">+21.11%</span> / 6月 <span class="up">+22.83%</span> 持续走强，防御 + 红利属性突出；<br>` +
+    `当天仅银行/家电/煤炭/调味品逆势上涨，属防御抱团；元件、通信设备、半导体、航天装备等科技成长领跌，且在 1月/3月 维度持续大幅走弱，反弹乏力，规避为主。`;
 }
 function renderZb(){
   document.getElementById("zbList").innerHTML = ZB.map(z=>`<span class="zb-chip">${z}</span>`).join("");

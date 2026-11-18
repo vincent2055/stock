@@ -12,3 +12,10 @@ __pycache__/
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# 数据库回填临时中间产物（base64/SQL 片段，无版本价值）
+*.b64
+*.folded
+seed_*.sql
+update_notes*.sql
+sector_codes.txt
